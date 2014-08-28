@@ -11,9 +11,9 @@ import (
 //               Type Conversions
 //------------------------------------------------
 
-// toInt64 converts the argument to a int64
+// ToInt64 converts the argument to a int64
 // throws panic if argument is non-numeric parameter
-func toInt64(a interface{}) int64 {
+func ToInt64(a interface{}) int64 {
 	switch t := a.(type) {
 	case string:
 		if strings.Contains(t, ".") {
@@ -31,39 +31,39 @@ func toInt64(a interface{}) int64 {
 			return int64(num)
 		}
 	}
-	if isInteger(a) {
+	if IsInteger(a) {
 		return reflect.ValueOf(a).Int()
-	} else if isUnsignedInteger(a) {
+	} else if IsUnsignedInteger(a) {
 		return int64(reflect.ValueOf(a).Uint())
-	} else if isFloat(a) {
+	} else if IsFloat(a) {
 		return int64(reflect.ValueOf(a).Float())
 	} else {
 		panic(fmt.Sprintf("Expected a number!  Got <%T> %#v", a, a))
 	}
 }
 
-// toFloat converts the argument to a float64
+// ToFloat converts the argument to a float64
 // throws panic if argument is non-numeric parameter
-func toFloat(a interface{}) float64 {
-	if isInteger(a) {
+func ToFloat(a interface{}) float64 {
+	if IsInteger(a) {
 		return float64(reflect.ValueOf(a).Int())
-	} else if isUnsignedInteger(a) {
+	} else if IsUnsignedInteger(a) {
 		return float64(reflect.ValueOf(a).Uint())
-	} else if isFloat(a) {
+	} else if IsFloat(a) {
 		return reflect.ValueOf(a).Float()
 	} else {
 		panic(fmt.Sprintf("Expected a number!  Got <%T> %#v", a, a))
 	}
 }
 
-// toUnsignedInteger converts the argument to a uint64
+// ToUnsignedInteger converts the argument to a uint64
 // throws panic if argument is non-numeric parameter
-func toUnsignedInteger(a interface{}) uint64 {
-	if isInteger(a) {
+func ToUnsignedInteger(a interface{}) uint64 {
+	if IsInteger(a) {
 		return uint64(reflect.ValueOf(a).Int())
-	} else if isUnsignedInteger(a) {
+	} else if IsUnsignedInteger(a) {
 		return reflect.ValueOf(a).Uint()
-	} else if isFloat(a) {
+	} else if IsFloat(a) {
 		return uint64(reflect.ValueOf(a).Float())
 	} else {
 		panic(fmt.Sprintf("Expected a number!  Got <%T> %#v", a, a))
@@ -74,7 +74,7 @@ func toUnsignedInteger(a interface{}) uint64 {
 //               Type Equality
 //------------------------------------------------
 
-func isArray(a interface{}) bool {
+func IsArray(a interface{}) bool {
 	if a == nil {
 		return false
 	}
@@ -86,40 +86,40 @@ func isArray(a interface{}) bool {
 	}
 }
 
-func isBool(a interface{}) bool {
+func IsBool(a interface{}) bool {
 	return reflect.TypeOf(a).Kind() == reflect.Bool
 }
 
-func isChan(a interface{}) bool {
-	if isNil(a) {
+func IsChan(a interface{}) bool {
+	if IsNil(a) {
 		return false
 	}
 	return reflect.TypeOf(a).Kind() == reflect.Chan
 }
 
-func isError(a interface{}) bool {
+func IsError(a interface{}) bool {
 	_, ok := a.(error)
 	return ok
 }
 
-func isFloat(a interface{}) bool {
+func IsFloat(a interface{}) bool {
 	kind := reflect.TypeOf(a).Kind()
 	return kind >= reflect.Float32 && kind <= reflect.Float64
 }
 
-func isInteger(a interface{}) bool {
+func IsInteger(a interface{}) bool {
 	kind := reflect.TypeOf(a).Kind()
 	return kind >= reflect.Int && kind <= reflect.Int64
 }
 
-func isMap(a interface{}) bool {
+func IsMap(a interface{}) bool {
 	if a == nil {
 		return false
 	}
 	return reflect.TypeOf(a).Kind() == reflect.Map
 }
 
-func isNil(a interface{}) bool {
+func IsNil(a interface{}) bool {
 	if a == nil {
 		return true
 	}
@@ -130,7 +130,7 @@ func isNil(a interface{}) bool {
 	return false
 }
 
-func isNumber(a interface{}) bool {
+func IsNumber(a interface{}) bool {
 	if a == nil {
 		return false
 	}
@@ -138,7 +138,7 @@ func isNumber(a interface{}) bool {
 	return kind >= reflect.Int  && kind <= reflect.Float64
 }
 
-func isSlice(a interface{}) bool {
+func IsSlice(a interface{}) bool {
 	if a == nil {
 		return false
 	}
@@ -150,14 +150,14 @@ func isSlice(a interface{}) bool {
 	}
 }
 
-func isString(a interface{}) bool {
+func IsString(a interface{}) bool {
 	if a == nil {
 		return false
 	}
 	return reflect.TypeOf(a).Kind() == reflect.String
 }
 
-func isUnsignedInteger(a interface{}) bool {
+func IsUnsignedInteger(a interface{}) bool {
 	kind := reflect.TypeOf(a).Kind()
 	return kind >= reflect.Uint && kind <= reflect.Uint64
 }
@@ -166,8 +166,8 @@ func isUnsignedInteger(a interface{}) bool {
 //                 Type Helpers
 //------------------------------------------------
 
-// lengthOf returns the number if items in argument
-func lengthOf(a interface{}) int {
+// LengthOf returns the number if items in argument
+func LengthOf(a interface{}) int {
 	if a == nil {
 		return 0
 	}
@@ -179,13 +179,13 @@ func lengthOf(a interface{}) int {
 	}
 }
 
-// toString converts the value to a string
-func toString(a interface{}) string {
+// ToString converts the value to a string
+func ToString(a interface{}) string {
 	return fmt.Sprint(a)
 }
 
-// typeOf returns the reflection Type of the value in the interface{}.
-// typeOf(nil) returns nil.
-func typeOf(a interface{}) string {
+// TypeOf returns the reflection Type of the value in the interface{}.
+// TypeOf(nil) returns nil.
+func TypeOf(a interface{}) string {
 	return fmt.Sprintf("%v", reflect.TypeOf(a))
 }
