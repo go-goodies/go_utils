@@ -3,7 +3,7 @@ package go_utils
 import (
 	"fmt"
 	"strings"
-	"reflect"q
+	"reflect"
 )
 
 // Iif_string is and immediate if helper that takes a boolean expression
@@ -77,4 +77,9 @@ func padLeft(s string, padLen int, args ...interface{}) string{
 // TypeOf(nil) returns nil.
 func TypeOf(i interface{}) string {
 	return fmt.Sprintf("%v", reflect.TypeOf(i))
+}
+
+// ToString converts the value to a string
+func ToString(value interface{}) string {
+	return fmt.Sprint(value)
 }
