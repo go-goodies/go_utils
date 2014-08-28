@@ -8,14 +8,14 @@ import (
 
 // Iif_string is and immediate if helper that takes a boolean expression
 // and returns a string, true_val if the expression is true else false_val
-func Iif_string(expr bool, true_val string, false_val string) string {
+func iif_string(expr bool, true_val string, false_val string) string {
 	return map[bool]string{true: true_val, false: false_val}[expr]
 }
 
 // Concat joins the strings in a slice, delimiting them with a comma, but it
 // allows you to pass the delimiter string to create a single string
 // Ex:  data: []string{"A", "B", "C"}; Join(data) ==> "A,B,C" ; Join(data, "|") ==> "A|B|C"
-func Join(slice []string, args ...interface{}) string {
+func join(slice []string, args ...interface{}) string {
 	delimiter := ","
 	for _, arg := range args {
 		switch t := arg.(type) {
@@ -28,13 +28,13 @@ func Join(slice []string, args ...interface{}) string {
 	ret := ""
 	for i, s := range slice {
 		// append delimiter except at the very end
-		ret += s + Iif_string((i < len(slice) - 1), delimiter, "")
+		ret += s + iif_string((i < len(slice) - 1), delimiter, "")
 	}
 	return ret
 }
 
 // Substr returns a portion (length characters) of string (s), beginning at a specified position (pos)
-func Substr(s string, pos, length int) string{
+func substr(s string, pos, length int) string{
 	runes:=[]rune(s)
 	l := pos+length
 	if l > len(runes) {
@@ -45,7 +45,7 @@ func Substr(s string, pos, length int) string{
 
 // padRight pads a string (s) with with a specified string (optional parameter) for padLen characters
 // If no string argument is passed, then s will be padded, to the right, with a single space character
-func PadRight(s string, padLen int, args ...interface{}) string{
+func padRight(s string, padLen int, args ...interface{}) string{
 	padStr := " "
 	for _, arg := range args {
 		switch t := arg.(type) {
@@ -60,7 +60,7 @@ func PadRight(s string, padLen int, args ...interface{}) string{
 
 // padLeft pads a string (s) with with a specified string (optional parameter) for padLen characters
 // If no string argument is passed, then s will be padded, to the left, with a single space character
-func PadLeft(s string, padLen int, args ...interface{}) string{
+func padLeft(s string, padLen int, args ...interface{}) string{
 	padStr := " "
 	for _, arg := range args {
 		switch t := arg.(type) {
@@ -73,13 +73,35 @@ func PadLeft(s string, padLen int, args ...interface{}) string{
 	return strings.Repeat(padStr, padLen) + s;
 }
 
-// TypeOf returns the reflection Type of the value in the interface{}.
-// TypeOf(nil) returns nil.
-func TypeOf(i interface{}) string {
-	return fmt.Sprintf("%v", reflect.TypeOf(i))
-}
-
-// ToString converts the value to a string
-func ToString(value interface{}) string {
-	return fmt.Sprint(value)
+// reflect doesn't consider 0 or "" to be zero, so we double check those here
+func isEmpty(args ...interface{}) bool {
+	val := reflect.ValueOf(args[0])
+	valType := val.Kind()
+	switch valType {
+	case reflect.String:
+		return val.String() == ""
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		return val.Int() == 0
+	case reflect.Float32, reflect.Float64:
+		return val.Float() == 0
+	case reflect.Interface, reflect.Slice, reflect.Ptr, reflect.Map, reflect.Chan, reflect.Func:
+		if val.IsNil() {
+			return true
+		} else if valType == reflect.Slice || valType == reflect.Map {
+			return val.Len() == 0
+		}
+	case reflect.Struct:
+		// verify that all of the struct's properties are empty
+		fieldCount := val.NumField()
+		for i := 0; i < fieldCount; i++ {
+			field := val.Field(i)
+			if field.IsValid() && !isEmpty(field) {
+				return false
+			}
+		}
+		return true
+	default:
+		return false
+	}
+	return false
 }

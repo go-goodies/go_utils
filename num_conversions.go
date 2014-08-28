@@ -1,5 +1,9 @@
 package go_utils
 
+import (
+	"strconv"
+)
+
 type Float64ConversionError struct {
 }
 
@@ -34,7 +38,6 @@ func ConvNumToFloat64(a interface{}) (float64, error) {
 	case float64:
 		return t, nil
 	}
-
 	return 0, Float64ConversionError{}
 }
 
@@ -73,6 +76,24 @@ func ConvNumToInt(a interface{}) (int, error) {
 	case float64:
 		return int(t), nil
 	}
-
 	return 0, IntConversionError{}
+}
+
+type StringConversionError struct {
+}
+
+func (e StringConversionError) Error() string {
+	return "Conversion Error: Could not convert sting to int."
+}
+
+func ConvStringToInt(a interface{}) (int, error) {
+	switch t := a.(type) {
+	case string:
+		i, err := strconv.Atoi(t)
+		if err != nil {
+			return 0, StringConversionError{}
+		}
+		return i, nil
+	}
+	return 0, StringConversionError{}
 }
