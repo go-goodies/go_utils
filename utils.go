@@ -14,7 +14,7 @@ func Iif_string(expr bool, true_val string, false_val string) string {
 
 // Concat joins the strings in a slice, delimiting them with a comma, but it
 // allows you to pass the delimiter string to create a single string
-// Ex:  data: {[A B C]}; Join(data) ==> "A,B,C" ; Join(data, "|") ==> "A|B|C"
+// Ex:  data: []string{"A", "B", "C"}; Join(data) ==> "A,B,C" ; Join(data, "|") ==> "A|B|C"
 func Join(slice []string, args ...interface{}) string {
 	delimiter := ","
 	for _, arg := range args {
@@ -45,7 +45,7 @@ func Substr(s string, pos, length int) string{
 
 // padRight pads a string (s) with with a specified string (optional parameter) for padLen characters
 // If no string argument is passed, then s will be padded, to the right, with a single space character
-func padRight(s string, padLen int, args ...interface{}) string{
+func PadRight(s string, padLen int, args ...interface{}) string{
 	padStr := " "
 	for _, arg := range args {
 		switch t := arg.(type) {
@@ -60,7 +60,7 @@ func padRight(s string, padLen int, args ...interface{}) string{
 
 // padLeft pads a string (s) with with a specified string (optional parameter) for padLen characters
 // If no string argument is passed, then s will be padded, to the left, with a single space character
-func padLeft(s string, padLen int, args ...interface{}) string{
+func PadLeft(s string, padLen int, args ...interface{}) string{
 	padStr := " "
 	for _, arg := range args {
 		switch t := arg.(type) {
