@@ -127,3 +127,29 @@ func (s *mySuite) TestTypes() {
 	s.Equal(IsNil(nil), true)
 	s.Equal(IsEmpty(m["XXX"]), true)
 }
+
+func (s *mySuite) TestContains() {
+
+	s.Equal(StringSliceContains("1", []string{"2", "3", "1"}), true)
+	s.Equal(StringSliceContains("1", []string{"2", "3", "5"}), false)
+
+	s.Equal(IntSliceContains(1, []int{2, 3, 1}), true)
+	s.Equal(IntSliceContains(1, []int{2, 3, 5}), false)
+
+	s.Equal(Float64SliceContains(1.0, []float64{2.0, 3.0, 1.0}), true)
+	s.Equal(Float64SliceContains(1.0, []float64{2.0, 3.0, 5.0}), false)
+
+	widgets := []*Widget{}
+	widgets = append(widgets, &Widget{"A", 1})
+	widgets = append(widgets, &Widget{"B", 2})
+	widgets = append(widgets, &Widget{"C", 3})
+
+	widget := new(Widget)
+	widget.Name = "B"
+	widget.Count = 2
+	s.Equal(ContainsWidget(widget, widgets), true)
+	widget.Count = 9
+	s.Equal(ContainsWidget(widget, widgets), false)
+}
+
+
