@@ -161,7 +161,7 @@ func (s *mySuite) TestSingleton() {
 }
 
 func (s *mySuite) TestDashes() {
-
 	s.Equal(Dashes(3, "-"), "---")
+	s.Not(s.Equal(Dashes(30, "-"), "---"))
 }
 
