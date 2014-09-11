@@ -105,3 +105,17 @@ func IsEmpty(args ...interface{}) bool {
 	}
 	return false
 }
+
+// Repeat a character (typically used for simple formatting of output)
+func Dashes(repeatCount int, args ...interface{}) string{
+	dashChar := "-"
+	for _, arg := range args {
+		switch t := arg.(type) {
+		case string:
+			dashChar = t
+		default:
+			panic("Unknown argument")
+		}
+	}
+	return strings.Repeat(dashChar, repeatCount);
+}
