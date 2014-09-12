@@ -112,6 +112,17 @@ func IsInteger(a interface{}) bool {
 	return kind >= reflect.Int && kind <= reflect.Int64
 }
 
+func IsInt(a interface{}) bool {
+	kind := reflect.TypeOf(a).Kind()
+	return kind == reflect.Int
+}
+
+func IsUint(a interface{}) bool {
+	kind := reflect.TypeOf(a).Kind()
+	return kind == reflect.Uint
+}
+
+
 func IsMap(a interface{}) bool {
 	if a == nil {
 		return false
