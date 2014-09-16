@@ -1,9 +1,19 @@
 package go_utils
 
 import (
-	"fmt"
+	go_deepcopy "github.com/margnus1/go-deepcopy"
+	. "fmt"
 	"strings"
 	"reflect"
+)
+
+const (
+	ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+	UPPER_A_ORD = 65
+	UPPER_Z_ORD = 90
+	LOWER_A_ORD = 97
+	LOWER_Z_ORD = 122
+	NOT_FOUND_INDEX = -1
 )
 
 // Iif_string is and immediate if helper that takes a boolean expression
@@ -22,7 +32,7 @@ func Join(slice []string, args ...interface{}) string {
 		case string:
 			delimiter = t
 		default:
-			panic(fmt.Sprintf("ERROR - Invalid argument (%v).  Must be a string.", arg))
+			panic(Sprintf("ERROR - Invalid argument (%v).  Must be a string.", arg))
 		}
 	}
 	ret := ""
@@ -118,4 +128,53 @@ func Dashes(repeatCount int, args ...interface{}) string{
 		}
 	}
 	return strings.Repeat(dashChar, repeatCount);
+}
+
+//	A: 65
+//	B: 66
+// . . .
+func PrintAlphabet() {
+	var thisChar string
+	for _, c := range ALPHABET {
+		thisChar = Sprintf("%c", c)
+		Printf("%s: %d\n", thisChar, c)
+	}
+}
+
+// Find index of search string in target string, starting at startPos
+func IndexOf(search string, target string, startPos int) int {
+	if (startPos < 0) {
+		startPos = 0
+	}
+	if len(target) < startPos {
+		return NOT_FOUND_INDEX
+	}
+	if IsEmpty(target) || IsEmpty(search) {
+		return NOT_FOUND_INDEX
+	}
+	foundPos := strings.Index(target[startPos:len(target)], search)
+	if foundPos == -1 {
+		return NOT_FOUND_INDEX
+	}
+	return foundPos + startPos
+}
+
+// Printf("isLower(\"a\"): %v\n", isLower("a"))	// isLower("a"): true
+// Printf("isLower(\"A\"): %v\n", isLower("A"))	// isLower("A"): false
+func IsLower(letter string) (bool) {
+	//	var thisChar string
+	var ret bool
+	for _, c := range letter {
+		//		thisChar = Sprintf("%c", c)
+		//		Printf("%s: %d\n", thisChar, c)
+		ret = (c >= LOWER_A_ORD && c <= LOWER_Z_ORD)
+	}
+	return ret
+}
+
+
+// Copy makes a recursive deep copy of obj and returns the result.
+// Wrap go_deepcopy.Copy (can later swap out implementation w/o breaking clients).
+func DeepCopy(obj interface{}) (r interface{}) {
+	return go_deepcopy.Copy(obj)
 }
