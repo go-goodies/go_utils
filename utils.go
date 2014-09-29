@@ -182,7 +182,7 @@ func DeepCopy(obj interface{}) (r interface{}) {
 }
 
 
-func newUuid() (uuid string, err error) {
+func NewUuid() (uuid string, err error) {
     uuidPtr, err := uuid.NewV4()
     if err != nil {
         err = errors.New("Could not generate UUID")
