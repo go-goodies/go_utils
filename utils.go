@@ -2,6 +2,7 @@ package go_utils
 
 import (
 	go_deepcopy "github.com/margnus1/go-deepcopy"
+    gouuid "github.com/nu7hatch/gouuid"
 	. "fmt"
 	"strings"
 	"reflect"
@@ -183,7 +184,7 @@ func DeepCopy(obj interface{}) (r interface{}) {
 
 
 func NewUuid() (uuid string, err error) {
-    uuidPtr, err := uuid.NewV4()
+    uuidPtr, err := gouuid.NewV4()
     if err != nil {
         err = errors.New("Could not generate UUID")
     } else {
