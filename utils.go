@@ -5,6 +5,7 @@ import (
 	. "fmt"
 	"strings"
 	"reflect"
+    "errors"
 )
 
 const (
@@ -142,6 +143,7 @@ func PrintAlphabet() {
 }
 
 // Find index of search string in target string, starting at startPos
+// Ex: domain := email[IndexOf("@", email, 0)+1:]
 func IndexOf(search string, target string, startPos int) int {
 	if (startPos < 0) {
 		startPos = 0
@@ -177,4 +179,15 @@ func IsLower(letter string) (bool) {
 // Wrap go_deepcopy.Copy (can later swap out implementation w/o breaking clients).
 func DeepCopy(obj interface{}) (r interface{}) {
 	return go_deepcopy.Copy(obj)
+}
+
+
+func newUuid() (uuid string, err error) {
+    uuidPtr, err := uuid.NewV4()
+    if err != nil {
+        err = errors.New("Could not generate UUID")
+    } else {
+        uuid = uuidPtr.String()
+    }
+    return
 }
