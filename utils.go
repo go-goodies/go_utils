@@ -1,20 +1,20 @@
 package go_utils
 
 import (
+	"errors"
+	"fmt"
 	go_deepcopy "github.com/margnus1/go-deepcopy"
-    gouuid "github.com/nu7hatch/gouuid"
-	. "fmt"
-	"strings"
+	gouuid "github.com/nu7hatch/gouuid"
 	"reflect"
-    "errors"
+	"strings"
 )
 
 const (
-	ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-	UPPER_A_ORD = 65
-	UPPER_Z_ORD = 90
-	LOWER_A_ORD = 97
-	LOWER_Z_ORD = 122
+	ALPHABET        = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+	UPPER_A_ORD     = 65
+	UPPER_Z_ORD     = 90
+	LOWER_A_ORD     = 97
+	LOWER_Z_ORD     = 122
 	NOT_FOUND_INDEX = -1
 )
 
@@ -34,21 +34,21 @@ func Join(slice []string, args ...interface{}) string {
 		case string:
 			delimiter = t
 		default:
-			panic(Sprintf("ERROR - Invalid argument (%v).  Must be a string.", arg))
+			panic(fmt.Sprintf("ERROR - Invalid argument (%v).  Must be a string.", arg))
 		}
 	}
 	ret := ""
 	for i, s := range slice {
 		// append delimiter except at the very end
-		ret += s + Iif_string((i < len(slice) - 1), delimiter, "")
+		ret += s + Iif_string((i < len(slice)-1), delimiter, "")
 	}
 	return ret
 }
 
 // Substr returns a portion (length characters) of string (s), beginning at a specified position (pos)
-func Substr(s string, pos, length int) string{
-	runes:=[]rune(s)
-	l := pos+length
+func Substr(s string, pos, length int) string {
+	runes := []rune(s)
+	l := pos + length
 	if l > len(runes) {
 		l = len(runes)
 	}
@@ -57,7 +57,7 @@ func Substr(s string, pos, length int) string{
 
 // PadRight pads a string (s) with with a specified string (optional parameter) for padLen characters
 // If no string argument is passed, then s will be padded, to the right, with a single space character
-func PadRight(s string, padLen int, args ...interface{}) string{
+func PadRight(s string, padLen int, args ...interface{}) string {
 	padStr := " "
 	for _, arg := range args {
 		switch t := arg.(type) {
@@ -67,12 +67,12 @@ func PadRight(s string, padLen int, args ...interface{}) string{
 			panic("Unknown argument")
 		}
 	}
-	return s + strings.Repeat(padStr, padLen);
+	return s + strings.Repeat(padStr, padLen)
 }
 
 // PadLeft pads a string (s) with with a specified string (optional parameter) for padLen characters
 // If no string argument is passed, then s will be padded, to the left, with a single space character
-func PadLeft(s string, padLen int, args ...interface{}) string{
+func PadLeft(s string, padLen int, args ...interface{}) string {
 	padStr := " "
 	for _, arg := range args {
 		switch t := arg.(type) {
@@ -82,7 +82,7 @@ func PadLeft(s string, padLen int, args ...interface{}) string{
 			panic("Unknown argument")
 		}
 	}
-	return strings.Repeat(padStr, padLen) + s;
+	return strings.Repeat(padStr, padLen) + s
 }
 
 // reflect doesn't consider 0 or "" to be zero, so we double check those here
@@ -119,7 +119,7 @@ func IsEmpty(args ...interface{}) bool {
 }
 
 // Repeat a character (typically used for simple formatting of output)
-func Dashes(repeatCount int, args ...interface{}) string{
+func Dashes(repeatCount int, args ...interface{}) string {
 	dashChar := "-"
 	for _, arg := range args {
 		switch t := arg.(type) {
@@ -129,7 +129,7 @@ func Dashes(repeatCount int, args ...interface{}) string{
 			panic("Unknown argument")
 		}
 	}
-	return strings.Repeat(dashChar, repeatCount);
+	return strings.Repeat(dashChar, repeatCount)
 }
 
 //	A: 65
@@ -138,15 +138,15 @@ func Dashes(repeatCount int, args ...interface{}) string{
 func PrintAlphabet() {
 	var thisChar string
 	for _, c := range ALPHABET {
-		thisChar = Sprintf("%c", c)
-		Printf("%s: %d\n", thisChar, c)
+		thisChar = fmt.Sprintf("%c", c)
+		fmt.Printf("%s: %d\n", thisChar, c)
 	}
 }
 
 // Find index of search string in target string, starting at startPos
 // Ex: domain := email[IndexOf("@", email, 0)+1:]
 func IndexOf(search string, target string, startPos int) int {
-	if (startPos < 0) {
+	if startPos < 0 {
 		startPos = 0
 	}
 	if len(target) < startPos {
@@ -162,19 +162,18 @@ func IndexOf(search string, target string, startPos int) int {
 	return foundPos + startPos
 }
 
-// Printf("isLower(\"a\"): %v\n", isLower("a"))	// isLower("a"): true
-// Printf("isLower(\"A\"): %v\n", isLower("A"))	// isLower("A"): false
-func IsLower(letter string) (bool) {
+// fmt.Printf("isLower(\"a\"): %v\n", isLower("a"))	// isLower("a"): true
+// fmt.Printf("isLower(\"A\"): %v\n", isLower("A"))	// isLower("A"): false
+func IsLower(letter string) bool {
 	//	var thisChar string
 	var ret bool
 	for _, c := range letter {
-		//		thisChar = Sprintf("%c", c)
-		//		Printf("%s: %d\n", thisChar, c)
+		//		thisChar = fmt.Sprintf("%c", c)
+		//		fmt.Printf("%s: %d\n", thisChar, c)
 		ret = (c >= LOWER_A_ORD && c <= LOWER_Z_ORD)
 	}
 	return ret
 }
-
 
 // Copy makes a recursive deep copy of obj and returns the result.
 // Wrap go_deepcopy.Copy (can later swap out implementation w/o breaking clients).
@@ -182,13 +181,29 @@ func DeepCopy(obj interface{}) (r interface{}) {
 	return go_deepcopy.Copy(obj)
 }
 
-
 func NewUuid() (uuid string, err error) {
-    uuidPtr, err := gouuid.NewV4()
-    if err != nil {
-        err = errors.New("Could not generate UUID")
-    } else {
-        uuid = uuidPtr.String()
-    }
-    return
+	uuidPtr, err := gouuid.NewV4()
+	if err != nil {
+		err = errors.New("Could not generate UUID")
+	} else {
+		uuid = uuidPtr.String()
+	}
+	return
+}
+
+// ToCurrency converts the value to a dollar and cents string
+func ToCurrencyString(v interface{}) string {
+	return fmt.Sprintf("%.2f", v)
+}
+
+// Prevent special CSV characters ("," and ";") from splitting a column
+func CSVScrub(a interface{}) string {
+	s := fmt.Sprint(a)
+	commaPos := strings.Index(s, ",")
+	semicolonPos := strings.Index(s, ";")
+	if commaPos > -1 || semicolonPos > -1 {
+		// comma or semicolon found
+		s = fmt.Sprintf("\"%s\"", s) // surround with quotes per IETF RFC 2.6 guideline
+	}
+	return s
 }
