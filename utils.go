@@ -1,12 +1,15 @@
 package go_utils
 
 import (
+	"crypto/rand"
+	"encoding/binary"
 	"errors"
 	"fmt"
 	go_deepcopy "github.com/margnus1/go-deepcopy"
 	gouuid "github.com/nu7hatch/gouuid"
 	"reflect"
 	"strings"
+	"time"
 )
 
 const (
@@ -86,6 +89,7 @@ func PadLeft(s string, padLen int, args ...interface{}) string {
 }
 
 // reflect doesn't consider 0 or "" to be zero, so we double check those here
+// Can handle a struct field (only one level)
 func IsEmpty(args ...interface{}) bool {
 	val := reflect.ValueOf(args[0])
 	valType := val.Kind()
@@ -103,15 +107,51 @@ func IsEmpty(args ...interface{}) bool {
 			return val.Len() == 0
 		}
 	case reflect.Struct:
+		return IsEmptyStruct(args[0])
+	default:
+		return false
+	}
+	return false
+}
+
+// Assumes the argument is a struct
+func IsEmptyStruct(args ...interface{}) bool {
+	val := reflect.ValueOf(args[0])
+	valType := val.Kind()
+	switch valType {
+	case reflect.Struct:
 		// verify that all of the struct's properties are empty
 		fieldCount := val.NumField()
 		for i := 0; i < fieldCount; i++ {
 			field := val.Field(i)
-			if field.IsValid() && !IsEmpty(field) {
+			if field.IsValid() && !IsEmptyNonStruct(field) {
 				return false
 			}
 		}
 		return true
+	default:
+		return false
+	}
+	return false
+}
+
+// Assumes the argument is not a struct
+func IsEmptyNonStruct(args ...interface{}) bool {
+	val := reflect.ValueOf(args[0])
+	valType := val.Kind()
+	switch valType {
+	case reflect.String:
+		return val.String() == ""
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		return val.Int() == 0
+	case reflect.Float32, reflect.Float64:
+		return val.Float() == 0
+	case reflect.Interface, reflect.Slice, reflect.Ptr, reflect.Map, reflect.Chan, reflect.Func:
+		if val.IsNil() {
+			return true
+		} else if valType == reflect.Slice || valType == reflect.Map {
+			return val.Len() == 0
+		}
 	default:
 		return false
 	}
@@ -196,8 +236,21 @@ func ToCurrencyString(v interface{}) string {
 	return fmt.Sprintf("%.2f", v)
 }
 
+// ToTS converts the value to a timestamp string (accepts both time.Time and *time.Time as argument)
+func ToTS(v interface{}) string {
+	var t time.Time
+	ret := ""
+	if TypeOf(v) == "time.Time" {
+		t = v.(time.Time)
+		ret = t.Format("2006-01-02 15:04 MST")
+	} else if TypeOf(v) == "*time.Time" {
+		ret = fmt.Sprintf("%s", time.Time(t).Format("2006-01-02 15:04 MST"))
+	}
+	return ret
+}
+
 // Prevent special CSV characters ("," and ";") from splitting a column
-func CSVScrub(a interface{}) string {
+func CsvScrub(a interface{}) string {
 	s := fmt.Sprint(a)
 	commaPos := strings.Index(s, ",")
 	semicolonPos := strings.Index(s, ";")
@@ -206,4 +259,10 @@ func CSVScrub(a interface{}) string {
 		s = fmt.Sprintf("\"%s\"", s) // surround with quotes per IETF RFC 2.6 guideline
 	}
 	return s
+}
+
+func Rand32() int32 {
+	var n int32
+	binary.Read(rand.Reader, binary.LittleEndian, &n)
+	return n
 }

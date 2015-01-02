@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"log"
 	"reflect"
-	"strings"
 	"strconv"
+	"strings"
 )
+
 //------------------------------------------------
 //               Type Conversions
 //------------------------------------------------
@@ -122,7 +123,6 @@ func IsUint(a interface{}) bool {
 	return kind == reflect.Uint
 }
 
-
 func IsMap(a interface{}) bool {
 	if a == nil {
 		return false
@@ -146,7 +146,7 @@ func IsNumber(a interface{}) bool {
 		return false
 	}
 	kind := reflect.TypeOf(a).Kind()
-	return kind >= reflect.Int  && kind <= reflect.Float64
+	return kind >= reflect.Int && kind <= reflect.Float64
 }
 
 func IsSlice(a interface{}) bool {
@@ -192,7 +192,19 @@ func LengthOf(a interface{}) int {
 
 // ToString converts the value to a string
 func ToString(a interface{}) string {
-	return fmt.Sprint(a)
+	ret := ""
+	if strings.Index(TypeOf(a), "map[string]string") > -1 {
+		// will return nicely formatted results for this type (map[string]string) of map only
+		m := a.(map[string]string)
+		for key, value := range m {
+			ret = fmt.Sprintf("%s: %v, ", strings.TrimSpace(key), strings.TrimSpace(value))
+		}
+		ret = strings.TrimSuffix(ret, ", ")
+
+	} else {
+		ret = fmt.Sprint(a)
+	}
+	return ret
 }
 
 // TypeOf returns the reflection Type of the value in the interface{}.
