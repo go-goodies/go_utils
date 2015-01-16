@@ -132,7 +132,6 @@ func IsEmptyStruct(args ...interface{}) bool {
 	default:
 		return false
 	}
-	return false
 }
 
 // Assumes the argument is not a struct
