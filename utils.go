@@ -70,7 +70,7 @@ func PadRight(s string, padLen int, args ...interface{}) string {
 			panic("Unknown argument")
 		}
 	}
-	return s + strings.Repeat(padStr, padLen)
+	return s + strings.Repeat(padStr, padLen-len(s))
 }
 
 // PadLeft pads a string (s) with with a specified string (optional parameter) for padLen characters
@@ -85,7 +85,7 @@ func PadLeft(s string, padLen int, args ...interface{}) string {
 			panic("Unknown argument")
 		}
 	}
-	return strings.Repeat(padStr, padLen) + s
+	return strings.Repeat(padStr, padLen-len(s)) + s
 }
 
 // reflect doesn't consider 0 or "" to be zero, so we double check those here
