@@ -4,9 +4,10 @@ import (
 	"crypto/rand"
 	"encoding/binary"
 	"errors"
-	"fmt"
+	. "fmt"
 	go_deepcopy "github.com/margnus1/go-deepcopy"
 	gouuid "github.com/nu7hatch/gouuid"
+	"net/http"
 	"reflect"
 	"strings"
 	"time"
@@ -37,7 +38,7 @@ func Join(slice []string, args ...interface{}) string {
 		case string:
 			delimiter = t
 		default:
-			panic(fmt.Sprintf("ERROR - Invalid argument (%v).  Must be a string.", arg))
+			panic(Sprintf("ERROR - Invalid argument (%v).  Must be a string.", arg))
 		}
 	}
 	ret := ""
@@ -177,8 +178,8 @@ func Dashes(repeatCount int, args ...interface{}) string {
 func PrintAlphabet() {
 	var thisChar string
 	for _, c := range ALPHABET {
-		thisChar = fmt.Sprintf("%c", c)
-		fmt.Printf("%s: %d\n", thisChar, c)
+		thisChar = Sprintf("%c", c)
+		Printf("%s: %d\n", thisChar, c)
 	}
 }
 
@@ -201,14 +202,14 @@ func IndexOf(search string, target string, startPos int) int {
 	return foundPos + startPos
 }
 
-// fmt.Printf("isLower(\"a\"): %v\n", isLower("a"))	// isLower("a"): true
-// fmt.Printf("isLower(\"A\"): %v\n", isLower("A"))	// isLower("A"): false
+// Printf("isLower(\"a\"): %v\n", isLower("a"))	// isLower("a"): true
+// Printf("isLower(\"A\"): %v\n", isLower("A"))	// isLower("A"): false
 func IsLower(letter string) bool {
 	//	var thisChar string
 	var ret bool
 	for _, c := range letter {
-		//		thisChar = fmt.Sprintf("%c", c)
-		//		fmt.Printf("%s: %d\n", thisChar, c)
+		//		thisChar = Sprintf("%c", c)
+		//		Printf("%s: %d\n", thisChar, c)
 		ret = (c >= LOWER_A_ORD && c <= LOWER_Z_ORD)
 	}
 	return ret
@@ -232,7 +233,7 @@ func NewUuid() (uuid string, err error) {
 
 // ToCurrency converts the value to a dollar and cents string
 func ToCurrencyString(v interface{}) string {
-	return fmt.Sprintf("%.2f", v)
+	return Sprintf("%.2f", v)
 }
 
 // ToTS converts the value to a timestamp string (accepts both time.Time and *time.Time as argument)
@@ -243,19 +244,19 @@ func ToTS(v interface{}) string {
 		t = v.(time.Time)
 		ret = t.Format("2006-01-02 15:04 MST")
 	} else if TypeOf(v) == "*time.Time" {
-		ret = fmt.Sprintf("%s", time.Time(t).Format("2006-01-02 15:04 MST"))
+		ret = Sprintf("%s", time.Time(t).Format("2006-01-02 15:04 MST"))
 	}
 	return ret
 }
 
 // Prevent special CSV characters ("," and ";") from splitting a column
 func CsvScrub(a interface{}) string {
-	s := fmt.Sprint(a)
+	s := Sprint(a)
 	commaPos := strings.Index(s, ",")
 	semicolonPos := strings.Index(s, ";")
 	if commaPos > -1 || semicolonPos > -1 {
 		// comma or semicolon found
-		s = fmt.Sprintf("\"%s\"", s) // surround with quotes per IETF RFC 2.6 guideline
+		s = Sprintf("\"%s\"", s) // surround with quotes per IETF RFC 2.6 guideline
 	}
 	return s
 }
@@ -264,4 +265,33 @@ func Rand32() int32 {
 	var n int32
 	binary.Read(rand.Reader, binary.LittleEndian, &n)
 	return n
+}
+
+// QueryString takes an http request object and returns its query string
+func QueryString(req *http.Request) string {
+	queryParamMap := req.URL.Query()
+	i := 0
+	queryParamString := ""
+	for key, value := range queryParamMap {
+		if len(value) > 1 {
+			for _, arrayValue := range value {
+				if i == 0 {
+					queryParamString += "?"
+				} else {
+					queryParamString += "&"
+				}
+				i += 1
+				queryParamString += key + "=" + arrayValue
+			}
+		} else {
+			if i == 0 {
+				queryParamString += "?"
+			} else {
+				queryParamString += "&"
+			}
+			i += 1
+			queryParamString += key + "=" + queryParamMap.Get(key)
+		}
+	}
+	return queryParamString
 }
