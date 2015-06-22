@@ -202,6 +202,20 @@ func IndexOf(search string, target string, startPos int) int {
 	return foundPos + startPos
 }
 
+// IndexOfGeneric returns the index of an element in any type of slice
+// ints := []int{1, 2, 3}
+// strings := []string{"A", "B", "C"}
+// IndexOfGeneric(len(ints), func(i int) bool { return ints[i] == 2 })
+// IndexOfGeneric(len(strings), func(i int) bool { return strings[i] == "B" })
+func IndexOfGeneric(maxLen int, findExpr func(i int) bool) int {
+	for i := 0; i < maxLen; i++ {
+		if findExpr(i) {
+			return i
+		}
+	}
+	return -1
+}
+
 // Printf("isLower(\"a\"): %v\n", isLower("a"))	// isLower("a"): true
 // Printf("isLower(\"A\"): %v\n", isLower("A"))	// isLower("A"): false
 func IsLower(letter string) bool {
